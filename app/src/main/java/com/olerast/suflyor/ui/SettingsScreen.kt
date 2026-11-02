@@ -19,6 +19,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -177,6 +178,7 @@ private fun SettingsHome(readiness: Readiness, onOpen: (SettingsPage) -> Unit) {
 @StringRes
 private fun defaultLangLabel(code: String): Int = when (SpeechLang.fromCode(code)) {
     SpeechLang.RU -> R.string.speech_lang_ru
+    SpeechLang.PT -> R.string.speech_lang_pt
     SpeechLang.EN -> R.string.speech_lang_en
     null -> R.string.speech_lang_auto
 }
@@ -314,11 +316,12 @@ private fun VoicePage() {
             color = Palette.TextMuted,
         )
     }
-    Row(Modifier.padding(horizontal = 20.dp).padding(bottom = 6.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+    FlowRow(Modifier.padding(horizontal = 20.dp).padding(bottom = 6.dp), horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
         listOf(
             AUTO to R.string.speech_lang_auto,
             SpeechLang.RU.code to R.string.speech_lang_ru,
             SpeechLang.EN.code to R.string.speech_lang_en,
+            SpeechLang.PT.code to R.string.speech_lang_pt,
         ).forEach { (value, label) ->
             Pill(stringResource(label), speechLang == value) {
                 if (speechLang != value) {
@@ -556,6 +559,7 @@ private fun LinkRow(title: String, subtitle: String, onClick: () -> Unit) {
 @StringRes
 fun speechLangName(lang: SpeechLang): Int = when (lang) {
     SpeechLang.RU -> R.string.settings_speech_lang_name_ru
+    SpeechLang.PT -> R.string.settings_speech_lang_name_pt
     SpeechLang.EN -> R.string.settings_speech_lang_name_en
 }
 

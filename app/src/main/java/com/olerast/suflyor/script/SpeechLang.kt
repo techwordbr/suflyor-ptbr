@@ -9,12 +9,14 @@ import com.olerast.suflyor.doc.ScriptDocument
  */
 enum class SpeechLang(val code: String) {
     RU("ru"),
-    EN("en");
+    EN("en"),
+    PT("pt");
 
     /** One word of script or recognizer text. English keeps inner apostrophes ("don't"); Russian splits on them. */
     val wordRegex: Regex
         get() = when (this) {
             RU -> TextNorm.WORD
+            PT -> PortugueseNorm.WORD
             EN -> EnglishNorm.WORD
         }
 
@@ -22,17 +24,20 @@ enum class SpeechLang(val code: String) {
     val fillers: Set<String>
         get() = when (this) {
             RU -> TextNorm.FILLERS
+            PT -> PortugueseNorm.FILLERS
             EN -> EnglishNorm.FILLERS
         }
 
     fun normalize(raw: String): String = when (this) {
         RU -> TextNorm.normalizeWord(raw)
+        PT -> PortugueseNorm.normalizeWord(raw)
         EN -> EnglishNorm.normalizeWord(raw)
     }
 
     /** Normalized words of a text in this language: the recognizer's output on every update, or script text. */
     fun words(text: String): List<String> = when (this) {
         RU -> TextNorm.words(text)
+        PT -> PortugueseNorm.words(text)
         EN -> EnglishNorm.WORD.findAll(text).map { EnglishNorm.normalizeWord(it.value) }.filter { it.isNotEmpty() }.toList()
     }
 
@@ -42,17 +47,19 @@ enum class SpeechLang(val code: String) {
      */
     fun isForeign(raw: String): Boolean = when (this) {
         RU -> raw.any { it in 'a'..'z' || it in 'A'..'Z' }
-        EN -> raw.any { Character.UnicodeScript.of(it.code) == Character.UnicodeScript.CYRILLIC }
+        PT, EN -> raw.any { Character.UnicodeScript.of(it.code) == Character.UnicodeScript.CYRILLIC }
     }
 
     /** How much a matched script word proves the position (before the tracker's frequency adjustment). */
     fun weight(norm: String, foreign: Boolean): Float = when (this) {
         RU -> TextNorm.weight(norm, foreign)
+        PT -> PortugueseNorm.weight(norm, foreign)
         EN -> EnglishNorm.weight(norm, foreign)
     }
 
     fun similarity(a: String, b: String): Float = when (this) {
         RU -> TextNorm.similarity(a, b)
+        PT -> PortugueseNorm.similarity(a, b)
         EN -> EnglishNorm.similarity(a, b)
     }
 
@@ -60,6 +67,7 @@ enum class SpeechLang(val code: String) {
     fun stem(w: String): String = when (this) {
         // Word forms of one Russian word usually share the first five letters.
         RU -> if (w.length > 5) w.substring(0, 5) else w
+        PT -> w
         EN -> EnglishNorm.stem(w)
     }
 
@@ -69,6 +77,7 @@ enum class SpeechLang(val code: String) {
      */
     fun canBePrefix(partial: String): Boolean = when (this) {
         RU -> true
+        PT -> partial !in PortugueseNorm.STOP
         EN -> partial !in EnglishNorm.STOP
     }
 
@@ -83,6 +92,7 @@ enum class SpeechLang(val code: String) {
         chains: Map<String, List<String>> = emptyMap(),
     ): List<String> = when (this) {
         RU -> TextNorm.regroupLetterNames(hyp, vocab, chains)
+        PT -> PortugueseNorm.prepareHypothesis(hyp, vocab, scriptHasDigits)
         EN -> EnglishNorm.prepareHypothesis(hyp, vocab, scriptHasDigits)
     }
 
@@ -92,7 +102,7 @@ enum class SpeechLang(val code: String) {
      * a step in the other direction restarts the run, so its behaviour stays exactly as tuned.
      */
     val strictGapRuns: Boolean
-        get() = this == EN
+        get() = this != RU
 
     companion object {
         fun fromCode(code: String?): SpeechLang? = entries.firstOrNull { it.code == code }
@@ -120,7 +130,13 @@ enum class SpeechLang(val code: String) {
                     }
                 }
             }
-            return if (latin > cyrillic) EN else RU
+            if (latin <= cyrillic) return RU
+            val body = doc.paragraphs.filter { it.kind == Paragraph.Kind.BODY }
+                .joinToString(" ") { it.text.replace(Regex("\\[[^]]*]"), " ") }
+            val words = PortugueseNorm.words(body).toSet()
+            val ptClues = setOf("voce", "voces", "nao", "uma", "para", "com", "hoje", "vamos", "seu", "sua", "tambem", "isso", "este", "esta", "portugues", "ola", "obrigado")
+            val enClues = setOf("the", "you", "your", "with", "this", "that", "hello", "today", "will", "are", "and")
+            return if (words.count { it in ptClues } > words.count { it in enClues }) PT else EN
         }
     }
 }

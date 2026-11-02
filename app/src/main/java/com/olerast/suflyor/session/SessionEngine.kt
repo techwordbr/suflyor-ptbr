@@ -308,7 +308,7 @@ class SessionEngine(private val app: App) : AudioCapture.Listener {
             }
             try {
                 val t0 = SystemClock.elapsedRealtime()
-                val engine = SherpaAsr.create(app, want)
+                val engine = if (want == SpeechLang.PT) com.olerast.suflyor.speech.VoskAsr.create(app) else SherpaAsr.create(app, want)
                 // Hints come from the script that is current now: another script may have been opened during the load.
                 val installed = synchronized(lock) {
                     (model.lang == want).also {

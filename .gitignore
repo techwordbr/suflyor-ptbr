@@ -18,6 +18,8 @@ app/src/main/assets/asr-ru/bpe.vocab
 app/src/main/assets/asr-en/*.onnx
 app/src/main/assets/asr-en/tokens.txt
 app/src/main/assets/asr-en/bpe.vocab
+app/src/main/assets/asr-pt.zip
+*.p12
 *.part
 
 # Signing keys and their passwords

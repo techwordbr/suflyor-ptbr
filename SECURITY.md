@@ -1,33 +1,15 @@
-# Security policy
+# Segurança e verificação
 
-Suflyor asks for sensitive access — the microphone, an accessibility service and drawing over other apps — so security reports are taken seriously.
+Esta distribuição PT-BR é independente do Suflyor original. A versão 0.7-ptbr.2 foi compilada e assinada localmente, não pelo fluxo GitHub Actions do autor original. Não oferecemos atestado de proveniência GitHub para este APK.
 
-## Reporting a vulnerability
+Confira o SHA-256 do arquivo na Release. O certificado de assinatura PT-BR tem SHA-256:
 
-Please **do not open a public issue** for security problems. Use GitHub's private reporting instead: **Security → Report a vulnerability** on this repository.
+`ced70079a9aae6867e6692b96911848b005840521e84b3890a63445e48592125`
 
-Include what you found, how to reproduce it (device, Android version, app version) and what an attacker could gain. You will get an answer within a week.
-
-## Scope
-
-In scope:
-- the app's code in this repository;
-- the release APKs published in GitHub Releases;
-- the build and release pipeline (`.github/workflows`, the Gradle build, including the download of the speech library and model).
-
-Out of scope: vulnerabilities in Android itself or in third-party apps (report those to their vendors), and attacks that need a phone that is already rooted or compromised.
-
-## Verifying a download
-
-Release APKs are built by GitHub Actions from a tagged commit. Each APK has a SHA-256 checksum file and a build provenance attestation. APKs are signed with the certificate whose SHA-256 fingerprint is:
-
-```
-77:F3:94:32:F5:05:FB:B7:8B:85:E7:37:CD:00:21:0A:44:C0:7A:13:2C:AC:FF:81:FE:9D:9D:79:CD:E9:A9:06
+```sh
+apksigner verify --print-certs Suflyor-PT-BR-0.7-ptbr.2.apk
 ```
 
-To check a file:
+O APK não possui permissão de internet. Microfone e acessibilidade são usados para acompanhar a leitura e exibir o roteiro sobre outros aplicativos. Confira PRIVACY.md para detalhes do funcionamento original.
 
-```bash
-apksigner verify --print-certs Suflyor-*.apk
-gh attestation verify Suflyor-*.apk --owner olerast67
-```
+Não inclua dados pessoais, gravações privadas ou credenciais em issues. Para problemas sensíveis, solicite um canal privado sem publicar detalhes exploráveis. Não há prazo garantido de atendimento.

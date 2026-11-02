@@ -37,4 +37,6 @@
     <string name="speech_lang_auto">Auto</string>
     <string name="speech_lang_ru" translatable="false">Русский</string>
     <string name="speech_lang_en" translatable="false">English</string>
+    <string name="speech_lang_pt" translatable="false">Português (Brasil)</string>
+    <string name="settings_speech_lang_name_pt">Portuguese (Brazil)</string>
 </resources>

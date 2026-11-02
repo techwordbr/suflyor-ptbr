@@ -26,11 +26,11 @@ android {
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.olerast.suflyor"
+        applicationId = "com.olerast.suflyor.ptbr"
         minSdk = 29
         targetSdk = 36
-        versionCode = 7
-        versionName = "0.7"
+        versionCode = 8
+        versionName = "0.7-ptbr.2"
         ndk {
             abiFilters += "arm64-v8a"
         }
@@ -69,6 +69,14 @@ android {
         compose = true
     }
 
+    testOptions {
+        unitTests.all {
+            // Existing importer regression deliberately nests 100,000 XML elements.
+            // JDK 25 lowered the JVM default to 100; this override applies only to tests.
+            it.systemProperty("jdk.xml.maxElementDepth", "200000")
+        }
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
@@ -77,8 +85,9 @@ android {
     androidResources {
         // The speech model is read straight from assets; keep it uncompressed so loading is fast.
         noCompress += listOf("onnx")
-        // Only the app's own languages: library strings (Compose, Material) otherwise show up in a third language.
-        localeFilters += listOf("en", "ru")
+        // Keep these in sync with the resource folders: Portuguese uses values-pt,
+        // so pt-BR and pt-PT both resolve it without regional resources being filtered out.
+        localeFilters += listOf("en", "ru", "pt")
     }
 
     packaging {
@@ -109,6 +118,8 @@ kotlin {
 }
 
 dependencies {
+    implementation("com.alphacephei:vosk-android:0.3.75@aar")
+    implementation("net.java.dev.jna:jna:5.18.1@aar")
     // sherpa-onnx v1.13.8 (Apache-2.0), downloaded by fetchSpeechAssets.
     implementation(files("libs/sherpa-onnx-1.13.8.aar"))
 
@@ -133,6 +144,7 @@ private val enModelBase =
     "https://huggingface.co/csukuangfj/sherpa-onnx-streaming-zipformer-en-2023-06-26/resolve/672fbf1b30579d6585301139bb363f42a0ad4a24"
 
 private val speechAssets = listOf(
+    Triple("src/main/assets/asr-pt.zip", "https://alphacephei.com/vosk/models/vosk-model-small-pt-0.3.zip", "6e1ce909032e1afa7a88e68a3d628ecafff302bdf195befab308826c395e93b7"),
     Triple(
         "libs/sherpa-onnx-1.13.8.aar",
         "https://github.com/k2-fsa/sherpa-onnx/releases/download/v1.13.8/sherpa-onnx-1.13.8.aar",

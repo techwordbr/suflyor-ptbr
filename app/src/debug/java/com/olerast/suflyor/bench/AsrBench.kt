@@ -15,6 +15,8 @@ import com.olerast.suflyor.script.ScriptModel
 import com.olerast.suflyor.script.SpeechLang
 import com.olerast.suflyor.script.biasWords
 import com.olerast.suflyor.speech.AsrUpdate
+import com.olerast.suflyor.speech.AsrEngine
+import com.olerast.suflyor.speech.VoskAsr
 import com.olerast.suflyor.speech.SherpaAsr
 import com.olerast.suflyor.track.ScriptTracker
 import java.io.File
@@ -86,7 +88,7 @@ class AsrBench : BroadcastReceiver() {
         )
 
         val t0 = SystemClock.elapsedRealtime()
-        val asr = SherpaAsr.create(context, lang, hot)
+        val asr = if (lang == SpeechLang.PT) VoskAsr.create(context) else SherpaAsr.create(context, lang, hot)
         log("init ${SystemClock.elapsedRealtime() - t0} ms: ${asr.description}")
         try {
             val model = doc?.let { ScriptLayout.build(it, phraseMode = true, lang = lang) }
@@ -116,7 +118,7 @@ class AsrBench : BroadcastReceiver() {
         private var lagRun = 0
         private var longestLag = 0
 
-        fun feed(asr: SherpaAsr, wav: Wav, audioSec: Double) {
+        fun feed(asr: AsrEngine, wav: Wav, audioSec: Double) {
             val rate = wav.sampleRate
             val chunk = maxOf(1, rate / 10)
             val n = wav.samples.size

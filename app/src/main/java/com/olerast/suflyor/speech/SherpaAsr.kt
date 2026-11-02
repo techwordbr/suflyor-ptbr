@@ -84,6 +84,7 @@ class SherpaAsr private constructor(
         private class Model(val dir: String, val label: String)
 
         private fun modelFor(lang: SpeechLang) = when (lang) {
+            SpeechLang.PT -> error("Portuguese uses VoskAsr")
             SpeechLang.RU -> Model("asr-ru", "Zipformer ru small int8")
             SpeechLang.EN -> Model("asr-en", "Zipformer en LibriSpeech 2023-06-26 int8")
         }
@@ -140,6 +141,7 @@ class SherpaAsr private constructor(
  */
 internal fun hotwordList(lang: SpeechLang, words: List<String>): String {
     val usable = when (lang) {
+        SpeechLang.PT -> emptySequence()
         SpeechLang.RU -> words.asSequence()
             .map { it.lowercase() }
             .filter { w -> w.length >= 4 && w.all { it in 'а'..'я' || it == 'ё' } }

@@ -1,8 +1,1 @@
-blank_issues_enabled: false
-contact_links:
-  - name: Report a bug without a GitHub account
-    url: https://olerast.com/security?project=teleprompter
-    about: A form on olerast.com (in Russian). No account needed.
-  - name: Security problem
-    url: https://docs.github.com/code-security/security-advisories/guidance-on-reporting-and-writing-information-about-vulnerabilities/privately-reporting-a-security-vulnerability
-    about: Please report vulnerabilities privately (Security → Report a vulnerability), not as an issue.
+blank_issues_enabled: true

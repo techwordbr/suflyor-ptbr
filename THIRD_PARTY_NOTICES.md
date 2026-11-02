@@ -38,3 +38,13 @@ The English model was trained on [LibriSpeech](https://www.openslr.org/12) by V.
 The speech library and model are not committed. The `fetchSpeechAssets` Gradle task downloads them from the sources above, from pinned revisions, and checks every file against a pinned SHA-256 (see `app/build.gradle.kts`).
 
 License texts: [Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0) · [MIT](https://opensource.org/license/mit) · [GPL-3.0](LICENSE)
+# Components added by the independent Portuguese fork (2026-11-01)
+
+- Vosk Android 0.3.75, Alpha Cephei, Apache-2.0: https://github.com/alphacep/vosk-api
+- Portuguese model `vosk-model-small-pt-0.3`, Alpha Cephei, Apache-2.0: https://alphacephei.com/vosk/models
+  Download: https://alphacephei.com/vosk/models/vosk-model-small-pt-0.3.zip
+  SHA-256: `6e1ce909032e1afa7a88e68a3d628ecafff302bdf195befab308826c395e93b7`.
+- JNA 5.18.1, JNA contributors, Apache-2.0 / LGPL-2.1-or-later (used under Apache-2.0): https://github.com/java-native-access/jna
+
+The Portuguese recognizer runs entirely on device. Original notices are retained above.
+
